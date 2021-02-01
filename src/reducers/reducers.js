@@ -10,10 +10,8 @@ function reducer(state, action) {
                 maze: action.payload.maze,
                 round: gameOver ? 1 : action.payload.round,
                 currentCell: action.payload.maze.startCell,
-                time: time > ROUND_TIME
-                    ? time
-                    : ROUND_TIME,
-                points: 0,
+                time: time > ROUND_TIME ? time : ROUND_TIME,
+                points: points,
                 lollipopCell: null,
                 iceCreamCell: null,
                 renderLollipop: false,
@@ -33,10 +31,7 @@ function reducer(state, action) {
                 ...state,
                 highScore: Math.max(highScore, points),
                 round: 0,
-                lollipopCell: null,
-                iceCreamCell: null,
-                wasLollipop: false,
-                wasIceCream: false,
+                points: 0,
                 gameOver: true
             }
         }
@@ -45,8 +40,6 @@ function reducer(state, action) {
             return {
                 ...state,
                 points: updatePoints,
-                time: ROUND_TIME,
-                round: round + 1
             }
         }
         case BONUS: {
@@ -54,26 +47,28 @@ function reducer(state, action) {
             switch (action.payload.bonus) {
                 case LOLLIPOP: {
                     newState = {
+                        ...state,
                         time: time + 15,
-                        points: points + 5000
+                        points: points + 5000,
+                        renderLollipop: true,
+                        lollipopCell: null
                     }
                     break
                 }
                 case ICE_CREAM: {
                     newState = {
+                        ...state,
                         time: time + 30,
-                        points: points + 10000
+                        points: points + 10000,
+                        renderIceCream: true,
+                        iceCreamCell: null
                     }
                     break
                 }
                 default:
                     throw new Error("Not a valid bonus")
             }
-            return {
-                ...state,
-                time: newState.time,
-                points: newState.points
-            }
+            return { ...newState }
         }
         case MOVE:
             if (!time || goal) return state
@@ -117,6 +112,5 @@ function reducer(state, action) {
             throw new Error("Unknown action please try again")
     }
 }
-
 
 export default reducer

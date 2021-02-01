@@ -1,5 +1,8 @@
 import React, { useCallback, useEffect, useReducer } from 'react'
-import { ROWS, COLS, MOVE, LOLLIPOP_TIMER, ICE_CREAM_TIMER, DIRECTIONS, DECREMENT_TIME, START_GAME, GAME_OVER, LOLLIPOP, BONUS, ICE_CREAM, COMPLETE_LEVEL } from './constants/constants'
+import {
+    INITIAL_STATE, ROWS, COLS, MOVE, LOLLIPOP_TIMER, ICE_CREAM_TIMER, DIRECTIONS,
+    DECREMENT_TIME, START_GAME, GAME_OVER, BONUS, COMPLETE_LEVEL, endAudio, gameAudio
+} from './constants/constants'
 import { generateRandomCell } from './utils/utils'
 import Notification from './Components/Notification/Notification'
 import Header from './Components/Header/Header'
@@ -10,22 +13,12 @@ import MazeGenerator from './maze/MazeGenerator'
 import reducer from './reducers/reducers'
 
 function App() {
-    const [state, dispatch] = useReducer(reducer, {
-        points: 0,
-        round: 1,
-        highScore: 0,
-        goal: false,
-        time: undefined,
-        maze: undefined,
-        currentCell: undefined,
-        renderLollipop: false,
-        renderIceCream: false,
-        lollipopCell: null,
-        iceCreamCell: null
-    })
+    const [state, dispatch] = useReducer(reducer, INITIAL_STATE)
 
     const handleGameStart = useCallback(() => {
         if (!state.time) {
+            gameAudio.loop = true
+            gameAudio.play()
             dispatch({
                 type: START_GAME,
                 payload: {
@@ -43,14 +36,6 @@ function App() {
     }, [state.time])
 
     const handleBonus = useCallback((bonus) => {
-        if (bonus === LOLLIPOP && !state.renderLollipop) {
-            state.renderLollipop = true
-            state.lollipopCell = null
-        }
-        if (bonus === ICE_CREAM && !state.renderIceCream) {
-            state.renderIceCream = true
-            state.iceCreamCell = null
-        }
         dispatch({ type: BONUS, payload: { bonus } })
     }, [state.time])
 
@@ -62,6 +47,8 @@ function App() {
                 round: state.round + 1,
             }
         })
+        gameAudio.loop = true
+        gameAudio.play()
     }, [state.time])
 
     useEffect(() => {
@@ -87,22 +74,26 @@ function App() {
     useEffect(() => {
         if (state.time === LOLLIPOP_TIMER && !state.renderLollipop) {
             state.lollipopCell = generateRandomCell(state.currentCell)
-            // state.lollipopCell = [0, 1]
         }
         if (state.time === ICE_CREAM_TIMER && !state.renderIceCream) {
             state.iceCreamCell = generateRandomCell(state.currentCell)
-            // state.iceCreamCell = [1, 0]
         }
     }, [state.time])
 
     useEffect(() => {
         if (state.goal && state.time) {
-            handleLevelChange()
+            gameAudio.load()
+            endAudio.play()
+            endAudio.addEventListener('ended', handleLevelChange)
+            return () => {
+                endAudio.removeEventListener('ended', handleLevelChange)
+            }
         }
     }, [state.goal])
 
     useEffect(() => {
-        if (state.time === 0) {
+        if (!state.time) {
+            gameAudio.load()
             dispatch({ type: GAME_OVER })
         }
     }, [state.time])
