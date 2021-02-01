@@ -1,9 +1,9 @@
 import React, { useEffect, useRef, useState } from 'react'
 import styles from './Board.module.css'
 import PropTypes from 'prop-types'
-import logoImage from '../../images/logo.svg'
-import lollipopImage from '../../images/lollipop.svg'
-import iceCreamImage from '../../images/ice_cream.svg'
+import logoImage from '../../assets/images/logo.svg'
+import lollipopImage from '../../assets/images/lollipop.svg'
+import iceCreamImage from '../../assets/images/ice_cream.svg'
 import useInterval from "@use-it/interval"
 import { ICE_CREAM, LOLLIPOP } from '../../constants/constants'
 

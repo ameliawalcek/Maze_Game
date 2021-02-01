@@ -11,7 +11,7 @@ import styles from './App.module.css'
 import useInterval from "@use-it/interval"
 import MazeGenerator from './maze/MazeGenerator'
 import reducer from './reducers/reducers'
-
+ 
 function App() {
     const [state, dispatch] = useReducer(reducer, INITIAL_STATE)
 

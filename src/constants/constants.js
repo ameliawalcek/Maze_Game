@@ -1,5 +1,5 @@
-import endAudioFile from '../audio/level_end.mp3'
-import mazeAudioFile from '../audio/maze.mp3'
+import endAudioFile from '../assets/audio/level_end.mp3'
+import mazeAudioFile from '../assets/audio/maze.mp3'
 
 export const endAudio = new Audio(endAudioFile)
 export const gameAudio = new Audio(mazeAudioFile)
