@@ -1,0 +1,9 @@
+4. Music: when a level starts, an audio file should be played (/src/audio/maze.mp3)
+   in a loop until the end of the level (or until game is over).
+
+   When the user reaches the goal, the music is stopped and instead the 'level end tune' is played
+   (in src\audio\level_end.mp3).
+
+5. Only after the 'level end tune' finishes to play we move to the next level -
+   a new maze is generated, the round is increased by one, the time gets reset to 60 seconds,
+   and the annoying music starts from the beginning.

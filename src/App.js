@@ -1,5 +1,6 @@
 import React, { useCallback, useEffect, useReducer } from 'react'
-import { ROWS, COLS, MOVE, LOLLIPOP_TIMER, ICE_CREAM_TIMER, DIRECTIONS, DECREMENT_TIME, START_GAME, GAME_OVER, LOLLIPOP, BONUS, ICE_CREAM } from './constants/constants'
+import { ROWS, COLS, MOVE, LOLLIPOP_TIMER, ICE_CREAM_TIMER, DIRECTIONS, DECREMENT_TIME, START_GAME, GAME_OVER, LOLLIPOP, BONUS, ICE_CREAM, COMPLETE_LEVEL } from './constants/constants'
+import { generateRandomCell } from './utils/utils'
 import Notification from './Components/Notification/Notification'
 import Header from './Components/Header/Header'
 import Board from './Components/Board/Board'
@@ -13,35 +14,23 @@ function App() {
         points: 0,
         round: 1,
         highScore: 0,
+        goal: false,
         time: undefined,
         maze: undefined,
         currentCell: undefined,
-        completeLevel: false,
-        wasLollipop: false,
-        wasIceCream: false,
+        renderLollipop: false,
+        renderIceCream: false,
         lollipopCell: null,
         iceCreamCell: null
     })
 
-    const generateRandomCell = () => {
-        const cell = [
-            Math.floor(Math.random() * ROWS),
-            Math.floor(Math.random() * COLS),
-        ]
-
-        if (state.currentCell[0] === cell[0]
-            && state.currentCell[1] === cell[1]) {
-            generateRandomCell()
-        }
-        return cell
-    }
-
-    const handleOnEnterKeyPressed = useCallback(() => {
+    const handleGameStart = useCallback(() => {
         if (!state.time) {
             dispatch({
                 type: START_GAME,
                 payload: {
-                    maze: new MazeGenerator(ROWS, COLS).generate()
+                    maze: new MazeGenerator(ROWS, COLS).generate(),
+                    round: state.round
                 }
             })
         }
@@ -53,23 +42,32 @@ function App() {
         }
     }, [state.time])
 
-    const handleBonus = (bonus) => {
-        if (bonus === LOLLIPOP && !state.wasLollipop) {
-            state.wasLollipop = true
+    const handleBonus = useCallback((bonus) => {
+        if (bonus === LOLLIPOP && !state.renderLollipop) {
+            state.renderLollipop = true
             state.lollipopCell = null
-            dispatch({ type: BONUS, payload: { bonus } })
         }
-        if (bonus === ICE_CREAM && !state.wasIceCream) {
-            state.wasIceCream = true
+        if (bonus === ICE_CREAM && !state.renderIceCream) {
+            state.renderIceCream = true
             state.iceCreamCell = null
-            dispatch({ type: BONUS, payload: { bonus } })
         }
-    }
+        dispatch({ type: BONUS, payload: { bonus } })
+    }, [state.time])
+
+    const handleLevelChange = useCallback(() => {
+        dispatch({ type: COMPLETE_LEVEL })
+        dispatch({
+            type: START_GAME, payload: {
+                maze: new MazeGenerator(ROWS, COLS).generate(),
+                round: state.round + 1,
+            }
+        })
+    }, [state.time])
 
     useEffect(() => {
         const onKeyDown = e => {
             if (e.keyCode === 13) {
-                handleOnEnterKeyPressed()
+                handleGameStart()
             }
             if (DIRECTIONS.includes(e.keyCode)) {
                 handlePlayerMove(e.keyCode)
@@ -80,22 +78,28 @@ function App() {
         return () => {
             window.removeEventListener('keydown', onKeyDown)
         }
-    }, [handleOnEnterKeyPressed])
+    }, [handleGameStart])
 
     useInterval(() => {
         dispatch({ type: DECREMENT_TIME })
     }, state.time ? 1000 : null)
 
     useEffect(() => {
-        if (state.time === LOLLIPOP_TIMER && !state.wasLollipop) {
-            // state.lollipopCell = generateRandomCell()
-            state.lollipopCell = [0, 1]
+        if (state.time === LOLLIPOP_TIMER && !state.renderLollipop) {
+            state.lollipopCell = generateRandomCell(state.currentCell)
+            // state.lollipopCell = [0, 1]
         }
-        if (state.time === ICE_CREAM_TIMER && !state.wasIceCream) {
-            // state.iceCreamCell = generateRandomCell()
-            state.iceCreamCell = [1, 0]
+        if (state.time === ICE_CREAM_TIMER && !state.renderIceCream) {
+            state.iceCreamCell = generateRandomCell(state.currentCell)
+            // state.iceCreamCell = [1, 0]
         }
     }, [state.time])
+
+    useEffect(() => {
+        if (state.goal && state.time) {
+            handleLevelChange()
+        }
+    }, [state.goal])
 
     useEffect(() => {
         if (state.time === 0) {

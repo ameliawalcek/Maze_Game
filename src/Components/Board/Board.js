@@ -84,7 +84,6 @@ function Board({ maze, currentCell, time, lollipopCell, iceCreamCell, handleBonu
 
             image.src = logoImage
 
-            //lollipop
             if (lollipopCell) {
                 const lollipop = new Image(logoSize, logoSize)
                 lollipop.onload = () => {
@@ -116,7 +115,6 @@ function Board({ maze, currentCell, time, lollipopCell, iceCreamCell, handleBonu
                 )
             }
 
-            //ice cream
             if (iceCreamCell) {
                 const iceCream = new Image(logoSize, logoSize)
                 iceCream.onload = () => {

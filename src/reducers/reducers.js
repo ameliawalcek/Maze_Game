@@ -1,20 +1,25 @@
-import { UP, DOWN, LEFT, RIGHT, MOVE, COMPLETE_LEVEL, ROUND_TIME, DECREMENT_TIME, BONUS, START_GAME, GAME_OVER, NEXT_LEVEL, ICE_CREAM, LOLLIPOP } from '../constants/constants'
+import { UP, DOWN, LEFT, RIGHT, MOVE, COMPLETE_LEVEL, ROUND_TIME, DECREMENT_TIME, BONUS, START_GAME, GAME_OVER, ICE_CREAM, LOLLIPOP } from '../constants/constants'
 
 function reducer(state, action) {
-    const { time, highScore, maze, currentCell, points, completeLevel, round } = state
+    const { time, highScore, maze, goal, currentCell, points, round, gameOver } = state
 
     switch (action.type) {
         case START_GAME: {
             return {
                 ...state,
                 maze: action.payload.maze,
-                round: state.gameOver ? 1 : action.payload.round,
+                round: gameOver ? 1 : action.payload.round,
                 currentCell: action.payload.maze.startCell,
-                time: ROUND_TIME,
+                time: time > ROUND_TIME
+                    ? time
+                    : ROUND_TIME,
                 points: 0,
-                wasLollipop: false,
-                wasIceCream: false,
+                lollipopCell: null,
+                iceCreamCell: null,
+                renderLollipop: false,
+                renderIceCream: false,
                 gameOver: false,
+                goal: false
             }
         }
         case DECREMENT_TIME: {
@@ -26,26 +31,22 @@ function reducer(state, action) {
         case GAME_OVER: {
             return {
                 ...state,
-                highScore: Math.max(highScore, points)
+                highScore: Math.max(highScore, points),
+                round: 0,
+                lollipopCell: null,
+                iceCreamCell: null,
+                wasLollipop: false,
+                wasIceCream: false,
+                gameOver: true
             }
         }
         case COMPLETE_LEVEL: {
-            return {
-                ...state,
-                completeLevel: true
-            }
-        }
-        case NEXT_LEVEL: {
             const updatePoints = points + (round * time * 100)
             return {
                 ...state,
-                highScore: Math.max(highScore, updatePoints),
-                time: Math.max(ROUND_TIME, time),
-                currentCell: action.payload.maze.startCell,
-                round: round + 1,
-                points: 0,
-                maze: action.payload.maze,
-                completeLevel: false
+                points: updatePoints,
+                time: ROUND_TIME,
+                round: round + 1
             }
         }
         case BONUS: {
@@ -75,9 +76,13 @@ function reducer(state, action) {
             }
         }
         case MOVE:
-            if (completeLevel) return state
+            if (!time || goal) return state
 
-            let newCell = undefined
+            if (currentCell[0] === maze.endCell[1] && currentCell[1] === maze.endCell[0]) {
+                return { ...state, goal: true }
+            }
+
+            let newCell
             switch (action.payload.direction) {
                 case UP:
                     if (!maze.cells[currentCell[0] + currentCell[1] * maze.cols][0]) {
