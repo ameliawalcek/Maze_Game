@@ -94,8 +94,8 @@ class MazeGenerator {
         this.grid[0].walls[3] = false;
         this.getCell(this.rows - 1, this.cols - 1).walls[2] = false;
 
-        return new Maze(this.rows, this.cols, this.grid.map(x => x.walls), [32, 15], [this.cols - 1, this.rows - 1]);
+        return new Maze(this.rows, this.cols, this.grid.map(x => x.walls), [0, 0], [this.cols - 1, this.rows - 1]);
     };
 }
-// [32, 15]
+
 export default MazeGenerator;

@@ -73,7 +73,6 @@ function reducer(state, action) {
         }
         case MOVE:
             if (!time || goal) return state
-            console.log(currentCell, maze.endCell)
 
             if (checkIntersect(currentCell, maze.endCell)) {
                 return { ...state, goal: true }

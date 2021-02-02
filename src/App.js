@@ -14,7 +14,7 @@ import reducer from './reducers/reducers'
 
 function App() {
     const [state, dispatch] = useReducer(reducer, INITIAL_STATE)
-console.log(state.maze)
+    
     const handleGameStart = useCallback(() => {
         if (!state.time) {
             gameAudio.loop = true
