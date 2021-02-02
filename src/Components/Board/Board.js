@@ -14,7 +14,7 @@ function Board({ maze, currentCell, time, lollipopCell, iceCreamCell, handleBonu
     const [displayGoal, setDisplayGoal] = useState(true)
     const [displayIceCreamScore, setDisplayIceCreamScore] = useState({ display: false, location: null })
     const [displayLollipopScore, setDisplayLollipopScore] = useState({ display: false, location: null })
-
+    
     useEffect(() => {
         const fitToContainer = () => {
             const { offsetWidth, offsetHeight } = container.current
@@ -31,7 +31,7 @@ function Board({ maze, currentCell, time, lollipopCell, iceCreamCell, handleBonu
 
     useEffect(() => {
         const drawLine = (x1, y1, width, height) => {
-            ctx.strokeStyle = 'white'
+            ctx.strokeStyle = '#b2f7ef'
             ctx.beginPath()
             ctx.moveTo(x1, y1)
             ctx.lineTo(x1 + width, y1 + height)
@@ -41,7 +41,7 @@ function Board({ maze, currentCell, time, lollipopCell, iceCreamCell, handleBonu
         const draw = () => {
             if (!maze) return
 
-            ctx.fillStyle = 'blue'
+            ctx.fillStyle = 'black'
             ctx.fillRect(0, 0, canvas.current.width, canvas.current.height)
 
             const blockWidth = Math.floor(canvas.current.width / maze.cols)
@@ -66,7 +66,7 @@ function Board({ maze, currentCell, time, lollipopCell, iceCreamCell, handleBonu
                 }
             }
             const textSize = Math.min(blockWidth, blockHeight)
-            ctx.fillStyle = 'red'
+            ctx.fillStyle = '#fd9ae4'
             ctx.font = '20px "Joystix"'
             ctx.textBaseline = 'top'
 

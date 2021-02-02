@@ -1,6 +1,6 @@
 import React, { useCallback, useEffect, useReducer } from 'react'
 import {
-    INITIAL_STATE, ROWS, COLS, MOVE, LOLLIPOP_TIMER, ICE_CREAM_TIMER, DIRECTIONS,
+    INITIAL_STATE, ROWS, COLS, MOVE, LOLLIPOP_TIMER, ICE_CREAM_TIMER, ARROWS, ENTER,
     DECREMENT_TIME, START_GAME, GAME_OVER, BONUS, COMPLETE_LEVEL, endAudio, gameAudio
 } from './constants/constants'
 import { generateRandomCell } from './utils/utils'
@@ -11,7 +11,7 @@ import styles from './App.module.css'
 import useInterval from "@use-it/interval"
 import MazeGenerator from './maze/MazeGenerator'
 import reducer from './reducers/reducers'
- 
+
 function App() {
     const [state, dispatch] = useReducer(reducer, INITIAL_STATE)
 
@@ -53,10 +53,10 @@ function App() {
 
     useEffect(() => {
         const onKeyDown = e => {
-            if (e.keyCode === 13) {
+            if (e.keyCode === ENTER) {
                 handleGameStart()
             }
-            if (DIRECTIONS.includes(e.keyCode)) {
+            if (ARROWS.includes(e.keyCode)) {
                 handlePlayerMove(e.keyCode)
             }
         }

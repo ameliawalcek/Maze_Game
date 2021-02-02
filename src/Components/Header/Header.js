@@ -14,7 +14,7 @@ function Header({highScore, time, points, round}) {
         <header>
             <div className={styles.row}>
                 <p>Welcome to the StorrSoft maze!</p>
-                <p>Hi-Score <span className={styles.score}>{highScore.toString().padStart(5, ' ')}</span></p>
+                <p>HiGH-Score <span className={styles.score}>{highScore.toString().padStart(5, ' ')}</span></p>
             </div>
             <p>
                 POINTS <span className={styles.score}>{points.toString().padStart(5, ' ')}</span>&nbsp;&nbsp;
