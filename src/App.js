@@ -76,7 +76,8 @@ function App() {
             state.lollipopCell = generateRandomCell(state.currentCell)
         }
         if (state.time === ICE_CREAM_TIMER && !state.renderIceCream) {
-            state.iceCreamCell = generateRandomCell(state.currentCell)
+            // state.iceCreamCell = generateRandomCell(state.currentCell)
+            state.iceCreamCell = [0,1]
         }
     }, [state.time])
 

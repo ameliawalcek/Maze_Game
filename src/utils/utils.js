@@ -11,3 +11,8 @@ export const generateRandomCell = (currentCell) => {
     }
     return cell
 }
+
+export const checkIntersect = (assetCellOne, assetCellTwo) => {
+    if(assetCellOne[0] === assetCellTwo[0] && assetCellOne[1] === assetCellTwo[1]) return true
+    return false
+}

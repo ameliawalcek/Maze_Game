@@ -6,6 +6,7 @@ import lollipopImage from '../../assets/images/lollipop.svg'
 import iceCreamImage from '../../assets/images/ice_cream.svg'
 import useInterval from "@use-it/interval"
 import { ICE_CREAM, LOLLIPOP } from '../../constants/constants'
+import { checkIntersect } from '../../utils/utils'
 
 function Board({ maze, currentCell, time, lollipopCell, iceCreamCell, handleBonus }) {
     const canvas = useRef(null)
@@ -14,7 +15,7 @@ function Board({ maze, currentCell, time, lollipopCell, iceCreamCell, handleBonu
     const [displayGoal, setDisplayGoal] = useState(true)
     const [displayIceCreamScore, setDisplayIceCreamScore] = useState({ display: false, location: null })
     const [displayLollipopScore, setDisplayLollipopScore] = useState({ display: false, location: null })
-    
+
     useEffect(() => {
         const fitToContainer = () => {
             const { offsetWidth, offsetHeight } = container.current
@@ -100,7 +101,7 @@ function Board({ maze, currentCell, time, lollipopCell, iceCreamCell, handleBonu
                 }
                 lollipop.src = lollipopImage
 
-                if (lollipopCell[0] === currentCell[0] && lollipopCell[1] === currentCell[1]) {
+                if (checkIntersect(lollipopCell, currentCell)) {
                     setDisplayLollipopScore({ display: true, location: lollipopCell })
                     setTimeout(() => setDisplayLollipopScore({ display: false, ...displayLollipopScore }), 3000)
                     handleBonus(LOLLIPOP)
@@ -131,7 +132,7 @@ function Board({ maze, currentCell, time, lollipopCell, iceCreamCell, handleBonu
                 }
                 iceCream.src = iceCreamImage
 
-                if (iceCreamCell[0] === currentCell[0] && iceCreamCell[1] === currentCell[1]) {
+                if (checkIntersect(iceCreamCell, currentCell)) {
                     setDisplayIceCreamScore({ display: true, location: iceCreamCell })
                     setTimeout(() => setDisplayIceCreamScore({ display: false, ...displayLollipopScore }), 3000)
                     handleBonus(ICE_CREAM)
