@@ -42,13 +42,15 @@ function Board({ maze, currentCell, time, lollipopCell, iceCreamCell, handleBonu
         const draw = () => {
             if (!maze) return
 
-            ctx.fillStyle = 'black'
-            ctx.fillRect(0, 0, canvas.current.width, canvas.current.height)
-
             const blockWidth = Math.floor(canvas.current.width / maze.cols)
             const blockHeight = Math.floor(canvas.current.height / maze.rows)
             const xOffset = Math.floor((canvas.current.width - maze.cols * blockWidth) / 2)
-
+            const textSize = Math.min(blockWidth, blockHeight)
+            const logoSize = 0.75 * Math.min(blockWidth, blockHeight)
+            
+            ctx.fillStyle = 'black'
+            ctx.fillRect(0, 0, canvas.current.width, canvas.current.height)
+            
             for (let y = 0; y < maze.rows; y++) {
                 for (let x = 0; x < maze.cols; x++) {
                     const cell = maze.cells[x + y * maze.cols]
@@ -66,19 +68,15 @@ function Board({ maze, currentCell, time, lollipopCell, iceCreamCell, handleBonu
                     }
                 }
             }
-            const textSize = Math.min(blockWidth, blockHeight)
             ctx.fillStyle = '#fd9ae4'
             ctx.font = '20px "Joystix"'
             ctx.textBaseline = 'top'
 
-            const logoSize = 0.75 * Math.min(blockWidth, blockHeight)
             const image = new Image(logoSize, logoSize)
             image.onload = () => {
                 ctx.drawImage(
                     image,
-                    currentCell[0] * blockWidth +
-                    xOffset +
-                    (blockWidth - logoSize) / 2,
+                    currentCell[0] * blockWidth + xOffset + (blockWidth - logoSize) / 2,
                     currentCell[1] * blockHeight + (blockHeight - logoSize) / 2,
                     logoSize,
                     logoSize)
@@ -91,9 +89,7 @@ function Board({ maze, currentCell, time, lollipopCell, iceCreamCell, handleBonu
                 lollipop.onload = () => {
                     ctx.drawImage(
                         lollipop,
-                        lollipopCell[0] * blockWidth +
-                        xOffset +
-                        (blockWidth - logoSize) / 2,
+                        lollipopCell[0] * blockWidth + xOffset + (blockWidth - logoSize) / 2,
                         lollipopCell[1] * blockHeight + (blockHeight - logoSize) / 2,
                         logoSize,
                         logoSize
@@ -122,9 +118,7 @@ function Board({ maze, currentCell, time, lollipopCell, iceCreamCell, handleBonu
                 iceCream.onload = () => {
                     ctx.drawImage(
                         iceCream,
-                        iceCreamCell[0] * blockWidth +
-                        xOffset +
-                        (blockWidth - logoSize) / 2,
+                        iceCreamCell[0] * blockWidth + xOffset + (blockWidth - logoSize) / 2,
                         iceCreamCell[1] * blockHeight + (blockHeight - logoSize) / 2,
                         logoSize,
                         logoSize
