@@ -149,7 +149,12 @@ function Board({ maze, currentCell, time, lollipopCell, iceCreamCell, handleBonu
             }
 
             if (displayGoal) {
-                ctx.fillText('GOAL!', maze.endCell[1] * blockWidth + xOffset + (blockWidth - textSize) / 2, maze.endCell[0] * blockHeight + (blockHeight - textSize) / 2, textSize)
+                ctx.fillText(
+                    'GOAL!',
+                    maze.endCell[0] * blockWidth + xOffset + (blockWidth - textSize) / 2,
+                    maze.endCell[1] * blockHeight + (blockHeight - textSize) / 2,
+                    textSize
+                )
             }
         }
 

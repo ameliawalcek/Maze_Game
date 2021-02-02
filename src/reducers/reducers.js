@@ -1,4 +1,5 @@
 import { UP, DOWN, LEFT, RIGHT, MOVE, COMPLETE_LEVEL, ROUND_TIME, DECREMENT_TIME, BONUS, START_GAME, GAME_OVER, ICE_CREAM, LOLLIPOP } from '../constants/constants'
+import { checkIntersect } from '../utils/utils'
 
 function reducer(state, action) {
     const { time, highScore, maze, goal, currentCell, points, round, gameOver } = state
@@ -72,8 +73,9 @@ function reducer(state, action) {
         }
         case MOVE:
             if (!time || goal) return state
+            console.log(currentCell, maze.endCell)
 
-            if (currentCell[0] === maze.endCell[1] && currentCell[1] === maze.endCell[0]) {
+            if (checkIntersect(currentCell, maze.endCell)) {
                 return { ...state, goal: true }
             }
 
