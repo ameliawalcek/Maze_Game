@@ -1,4 +1,4 @@
 ## Maze Game!
-Open [https://storrsoft-maze.netlify.app](https://storrsoft-maze.netlify.app) to view it in the browser.
+Open [Maze Game](https://storrsoft-maze.netlify.app) to play in the browser.
 
 ![](https://imgur.com/dRWzhJE.gif)
