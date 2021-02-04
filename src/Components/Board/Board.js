@@ -15,7 +15,7 @@ function Board({ maze, currentCell, time, lollipopCell, iceCreamCell, handleBonu
     const [displayGoal, setDisplayGoal] = useState(true)
     const [displayIceCreamScore, setDisplayIceCreamScore] = useState({ display: false, location: null })
     const [displayLollipopScore, setDisplayLollipopScore] = useState({ display: false, location: null })
-
+   
     useEffect(() => {
         const fitToContainer = () => {
             const { offsetWidth, offsetHeight } = container.current
@@ -47,10 +47,10 @@ function Board({ maze, currentCell, time, lollipopCell, iceCreamCell, handleBonu
             const xOffset = Math.floor((canvas.current.width - maze.cols * blockWidth) / 2)
             const textSize = Math.min(blockWidth, blockHeight)
             const logoSize = 0.75 * Math.min(blockWidth, blockHeight)
-            
+
             ctx.fillStyle = 'black'
             ctx.fillRect(0, 0, canvas.current.width, canvas.current.height)
-            
+
             for (let y = 0; y < maze.rows; y++) {
                 for (let x = 0; x < maze.cols; x++) {
                     const cell = maze.cells[x + y * maze.cols]
@@ -79,7 +79,8 @@ function Board({ maze, currentCell, time, lollipopCell, iceCreamCell, handleBonu
                     currentCell[0] * blockWidth + xOffset + (blockWidth - logoSize) / 2,
                     currentCell[1] * blockHeight + (blockHeight - logoSize) / 2,
                     logoSize,
-                    logoSize)
+                    logoSize
+                )
             }
 
             image.src = logoImage
