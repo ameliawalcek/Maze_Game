@@ -21,7 +21,7 @@ export const BONUS = 'BONUS'
 export const LOLLIPOP = 'LOLLIPOP'
 export const ICE_CREAM = 'ICE_CREAM'
 
-export const ROUND_TIME = 60
+export const ROUND_TIME = 31
 export const LOLLIPOP_TIMER = 15
 export const ICE_CREAM_TIMER = 30
 export const ROWS = 17

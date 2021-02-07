@@ -14,7 +14,7 @@ import reducer from './reducers/reducers'
 
 function App() {
     const [state, dispatch] = useReducer(reducer, INITIAL_STATE)
-    
+
     const handleGameStart = useCallback(() => {
         if (!state.time) {
             gameAudio.loop = true
@@ -53,13 +53,10 @@ function App() {
 
     useEffect(() => {
         const onKeyDown = e => {
-            if (e.keyCode === ENTER) {
-                handleGameStart()
-            }
-            if (ARROWS.includes(e.keyCode)) {
-                handlePlayerMove(e.keyCode)
-            }
+            if (e.keyCode === ENTER) handleGameStart()
+            if (ARROWS.includes(e.keyCode)) handlePlayerMove(e.keyCode)
         }
+
         window.addEventListener('keydown', onKeyDown)
 
         return () => {
@@ -76,7 +73,8 @@ function App() {
             state.lollipopCell = generateRandomCell(state.currentCell)
         }
         if (state.time === ICE_CREAM_TIMER && !state.renderIceCream) {
-            state.iceCreamCell = generateRandomCell(state.currentCell)
+            // state.iceCreamCell = generateRandomCell(state.currentCell)
+            state.iceCreamCell = [0, 1]
         }
     }, [state.time])
 

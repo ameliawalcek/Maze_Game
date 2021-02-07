@@ -11,11 +11,41 @@ import { checkIntersect } from '../../utils/utils'
 function Board({ maze, currentCell, time, lollipopCell, iceCreamCell, handleBonus }) {
     const canvas = useRef(null)
     const container = useRef(null)
+
     const [ctx, setCtx] = useState(undefined)
     const [displayGoal, setDisplayGoal] = useState(true)
     const [displayIceCreamScore, setDisplayIceCreamScore] = useState({ display: false, location: null })
     const [displayLollipopScore, setDisplayLollipopScore] = useState({ display: false, location: null })
-   
+
+    const blockWidth = Math.floor(canvas.current?.width / maze?.cols)
+    const blockHeight = Math.floor(canvas.current?.height / maze?.rows)
+    const xOffset = Math.floor((canvas.current?.width - maze?.cols * blockWidth) / 2)
+    const textSize = Math.min(blockWidth, blockHeight)
+    const logoSize = 0.75 * Math.min(blockWidth, blockHeight)
+
+    const displayImage = (currentCell, logo) => {
+        const image = new Image(logoSize, logoSize)
+        image.onload = () => {
+            ctx.drawImage(
+                image,
+                currentCell[0] * blockWidth + xOffset + (blockWidth - logoSize) / 2,
+                currentCell[1] * blockHeight + (blockHeight - logoSize) / 2,
+                logoSize,
+                logoSize
+            )
+        }
+        image.src = logo
+    }
+
+    const displayText = (text, location) => {
+        ctx.fillText(
+            text,
+            location[0] * blockWidth + xOffset + (blockWidth - textSize) / 2,
+            location[1] * blockHeight + (blockHeight - textSize) / 2,
+            textSize
+        )
+    }
+
     useEffect(() => {
         const fitToContainer = () => {
             const { offsetWidth, offsetHeight } = container.current
@@ -31,6 +61,8 @@ function Board({ maze, currentCell, time, lollipopCell, iceCreamCell, handleBonu
     }, [])
 
     useEffect(() => {
+        if (!maze) return
+
         const drawLine = (x1, y1, width, height) => {
             ctx.strokeStyle = '#b2f7ef'
             ctx.beginPath()
@@ -39,130 +71,73 @@ function Board({ maze, currentCell, time, lollipopCell, iceCreamCell, handleBonu
             ctx.stroke()
         }
 
-        const draw = () => {
-            if (!maze) return
+        ctx.fillStyle = 'black'
+        ctx.textBaseline = 'top'
+        ctx.font = '20px "Joystix"'
 
-            const blockWidth = Math.floor(canvas.current.width / maze.cols)
-            const blockHeight = Math.floor(canvas.current.height / maze.rows)
-            const xOffset = Math.floor((canvas.current.width - maze.cols * blockWidth) / 2)
-            const textSize = Math.min(blockWidth, blockHeight)
-            const logoSize = 0.75 * Math.min(blockWidth, blockHeight)
+        ctx.fillRect(0, 0, canvas.current.width, canvas.current.height)
+        
+        ctx.fillStyle = '#fd9ae4'
 
-            ctx.fillStyle = 'black'
-            ctx.fillRect(0, 0, canvas.current.width, canvas.current.height)
-
-            for (let y = 0; y < maze.rows; y++) {
-                for (let x = 0; x < maze.cols; x++) {
-                    const cell = maze.cells[x + y * maze.cols]
-                    if (y === 0 && cell[0]) {
-                        drawLine(blockWidth * x + xOffset, blockHeight * y, blockWidth, 0)
-                    }
-                    if (cell[1]) {
-                        drawLine(blockWidth * (x + 1) + xOffset, blockHeight * y, 0, blockHeight)
-                    }
-                    if (cell[2]) {
-                        drawLine(blockWidth * x + xOffset, blockHeight * (y + 1), blockWidth, 0)
-                    }
-                    if (x === 0 && cell[3]) {
-                        drawLine(blockWidth * x + xOffset, blockHeight * y, 0, blockHeight)
-                    }
+        for (let y = 0; y < maze.rows; y++) {
+            for (let x = 0; x < maze.cols; x++) {
+                const cell = maze.cells[x + y * maze.cols]
+                if (y === 0 && cell[0]) {
+                    drawLine(blockWidth * x + xOffset, blockHeight * y, blockWidth, 0)
+                }
+                if (cell[1]) {
+                    drawLine(blockWidth * (x + 1) + xOffset, blockHeight * y, 0, blockHeight)
+                }
+                if (cell[2]) {
+                    drawLine(blockWidth * x + xOffset, blockHeight * (y + 1), blockWidth, 0)
+                }
+                if (x === 0 && cell[3]) {
+                    drawLine(blockWidth * x + xOffset, blockHeight * y, 0, blockHeight)
                 }
             }
-            ctx.fillStyle = '#fd9ae4'
-            ctx.font = '20px "Joystix"'
-            ctx.textBaseline = 'top'
+        }
+        displayImage(currentCell, logoImage)
 
-            const image = new Image(logoSize, logoSize)
-            image.onload = () => {
-                ctx.drawImage(
-                    image,
-                    currentCell[0] * blockWidth + xOffset + (blockWidth - logoSize) / 2,
-                    currentCell[1] * blockHeight + (blockHeight - logoSize) / 2,
-                    logoSize,
-                    logoSize
-                )
-            }
+    }, [ctx, currentCell, maze, time])
 
-            image.src = logoImage
+    useEffect(() => {
+        if (displayGoal && maze) displayText('GOAL!', maze.endCell)
+    }, [displayGoal])
 
-            if (lollipopCell) {
-                const lollipop = new Image(logoSize, logoSize)
-                lollipop.onload = () => {
-                    ctx.drawImage(
-                        lollipop,
-                        lollipopCell[0] * blockWidth + xOffset + (blockWidth - logoSize) / 2,
-                        lollipopCell[1] * blockHeight + (blockHeight - logoSize) / 2,
-                        logoSize,
-                        logoSize
-                    )
-                }
-                lollipop.src = lollipopImage
+    useEffect(() => {
+        if (lollipopCell) {
+            displayImage(lollipopCell, lollipopImage)
 
-                if (checkIntersect(lollipopCell, currentCell)) {
-                    setDisplayLollipopScore({ display: true, location: lollipopCell })
-                    setTimeout(() => setDisplayLollipopScore({ display: false, ...displayLollipopScore }), 3000)
-                    handleBonus(LOLLIPOP)
-                }
-            }
-
-            if (displayLollipopScore.display) {
-                ctx.fillText(
-                    "+5000",
-                    displayLollipopScore.location[0] * blockWidth + xOffset + (blockWidth - textSize) / 2,
-                    displayLollipopScore.location[1] * blockHeight + (blockHeight - textSize) / 2,
-                    textSize
-                )
-            }
-
-            if (iceCreamCell) {
-                const iceCream = new Image(logoSize, logoSize)
-                iceCream.onload = () => {
-                    ctx.drawImage(
-                        iceCream,
-                        iceCreamCell[0] * blockWidth + xOffset + (blockWidth - logoSize) / 2,
-                        iceCreamCell[1] * blockHeight + (blockHeight - logoSize) / 2,
-                        logoSize,
-                        logoSize
-                    )
-                }
-                iceCream.src = iceCreamImage
-
-                if (checkIntersect(iceCreamCell, currentCell)) {
-                    setDisplayIceCreamScore({ display: true, location: iceCreamCell })
-                    setTimeout(() => setDisplayIceCreamScore({ display: false, ...displayLollipopScore }), 3000)
-                    handleBonus(ICE_CREAM)
-                }
-            }
-
-            if (displayIceCreamScore.display) {
-                ctx.fillText(
-                    "+10000",
-                    displayIceCreamScore.location[0] * blockWidth + xOffset + (blockWidth - textSize) / 2,
-                    displayIceCreamScore.location[1] * blockHeight + (blockHeight - textSize) / 2,
-                    textSize
-                )
-            }
-
-            if (displayGoal) {
-                ctx.fillText(
-                    'GOAL!',
-                    maze.endCell[0] * blockWidth + xOffset + (blockWidth - textSize) / 2,
-                    maze.endCell[1] * blockHeight + (blockHeight - textSize) / 2,
-                    textSize
-                )
+            if (checkIntersect(lollipopCell, currentCell)) {
+                setDisplayLollipopScore({ display: true, location: lollipopCell })
+                setTimeout(() => setDisplayLollipopScore({ display: false, ...displayLollipopScore }), 3000)
+                handleBonus(LOLLIPOP)
             }
         }
 
-        draw()
-    }, [ctx, currentCell, maze, iceCreamCell, lollipopCell, time])
+        if (iceCreamCell) {
+            displayImage(iceCreamCell, iceCreamImage)
+
+            if (checkIntersect(iceCreamCell, currentCell)) {
+                setDisplayIceCreamScore({ display: true, location: iceCreamCell })
+                setTimeout(() => setDisplayIceCreamScore({ display: false, ...displayLollipopScore }), 3000)
+                handleBonus(ICE_CREAM)
+            }
+        }
+
+        if (displayLollipopScore.display) {
+            displayText("+5000", displayLollipopScore.location)
+        }
+
+        if (displayIceCreamScore.display) {
+            displayText("+10000", displayIceCreamScore.location)
+        }
+    }, [time, currentCell, lollipopCell, iceCreamCell])
 
     useInterval(() => { setDisplayGoal((prevGoal) => !prevGoal) }, 800)
 
     return (
-        <div
-            className={styles.root}
-            ref={container}
-        >
+        <div className={styles.root} ref={container}        >
             <canvas ref={canvas} />
         </div>
     )

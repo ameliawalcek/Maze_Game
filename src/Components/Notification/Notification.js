@@ -8,7 +8,7 @@ function Notification({show, gameOver}) {
         show &&
         <div className={styles.root}>
             {gameOver ? <p>GAME OVER</p> : null}
-            PRESS ENTER!
+            PRESS ENTER TO START!
         </div>
     );
 }
