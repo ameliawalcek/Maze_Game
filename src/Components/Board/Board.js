@@ -23,13 +23,13 @@ function Board({ maze, currentCell, time, lollipopCell, iceCreamCell, handleBonu
     const textSize = Math.min(blockWidth, blockHeight)
     const logoSize = 0.75 * Math.min(blockWidth, blockHeight)
 
-    const displayImage = (currentCell, logo) => {
+    const displayImage = (cell, logo) => {
         const image = new Image(logoSize, logoSize)
         image.onload = () => {
             ctx.drawImage(
                 image,
-                currentCell[0] * blockWidth + xOffset + (blockWidth - logoSize) / 2,
-                currentCell[1] * blockHeight + (blockHeight - logoSize) / 2,
+                cell[0] * blockWidth + xOffset + (blockWidth - logoSize) / 2,
+                cell[1] * blockHeight + (blockHeight - logoSize) / 2,
                 logoSize,
                 logoSize
             )
